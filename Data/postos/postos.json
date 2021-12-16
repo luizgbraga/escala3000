@@ -1,0 +1,23 @@
+{
+    "0":{
+        "gender":0,
+        "people":3,
+        "type":2,
+        "where":"Ala Norte",
+        "year":1
+    },
+    "1":{
+        "gender":0,
+        "people":1,
+        "type":0,
+        "where":"3o piso",
+        "year":1
+    },
+    "2":{
+        "gender":0,
+        "people":1,
+        "type":0,
+        "where":"4o piso",
+        "year":1
+    }
+}
