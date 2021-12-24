@@ -1,50 +1,48 @@
-import pandas as pd
-import hashes
+import json
+
 
 class Postos:
 
     postos_dir = "./Data/postos/postos.json"
-    local_code = {}
+
 
     def __init__(self):
-        postos_df = pd.read_json(Postos.postos_dir, orient="index")
+        with open(Postos.postos_dir, "r") as f:
+            postos_dic = json.loads(f.read())
+
         self.postos = {}
         
-        for index, key in postos_df.iterrows():
-            posto = Postos.Posto(key["type"], key["where"], key["people"], key["gender"], key["year"], key["code"], key["black"], key["red"])
-            self.postos[posto.code] = posto
+        for key in postos_dic:
+            posto = Postos.Posto(postos_dic[key])
+            self.postos[key] = posto
 
 
     def new_posto(self, type, where, people, gender, year, code):
-        posto = Postos.Posto(type, where, people, gender, year, code, [], [])
+        dic = {
+            "type": type,
+            "where": where,
+            "people": people,
+            "gender": gender,
+            "year": year,
+            "black": [],
+            "red": []
+        }
+        posto = Postos.Posto(dic)
         posto.new_escale()
-        posto_dic = posto.return_dict()
-
-        postos_df = pd.read_json(Postos.postos_dir, orient="index")
-        postos_df = postos_df.append(posto_dic, ignore_index = True)
-        self.postos[posto.code] = posto
-
-        postos_df.to_json(Postos.postos_dir, orient="index")
+        self.postos[str(code)] = posto
 
 
     def delete(self, code):
-        postos_df = pd.read_json(Postos.postos_dir, orient="index")
-
-        postos_df = postos_df.drop(postos_df.index[postos_df["code"] == code])
-        temp = self.postos.pop(code)
-
-        #postos_df = postos_df.reset_index(drop=True)
-
-        postos_df.to_json(Postos.postos_dir, orient="index")
+        removed = self.postos.pop(str(code))
 
 
     def list_postos(self, details = False):
         if details:
             for key in self.postos:
-                print(self.postos[key].code, " ", self.postos[key].get_name_details())
+                print(key, " ", self.postos[key].get_name_details())
         else:
             for key in self.postos:
-                print(self.postos[key].code, " ", self.postos[key].get_name())
+                print(key, " ", self.postos[key].get_name())
 
 
     def get_using(self):
@@ -55,12 +53,14 @@ class Postos:
                 using.append(int(line))
         return using
 
-    def save(self):
-        
-        pass
 
-    def close(self):
-        pass
+    def save(self):
+        dic_postos = {}
+        for key in self.postos:
+            dic_postos[key] = self.postos[key].return_dict()
+
+        with open(Postos.postos_dir, "w") as f:
+            json.dump(dic_postos, f)
 
 
     class Posto:
@@ -79,15 +79,14 @@ class Postos:
             4-4o piso
         """
 
-        def __init__(self, type, where, people, gender, year, code, black, red):
-            self.type = type
-            self.where = where
-            self.people = people
-            self.gender = gender
-            self.year = year
-            self.code = code
-            self.black = black
-            self.red = red
+        def __init__(self, dic):
+            self.type = dic["type"]
+            self.where = dic["where"]
+            self.people = dic["people"]
+            self.gender = dic["gender"]
+            self.year = dic["year"]
+            self.black = dic["black"]
+            self.red = dic["red"]
 
 
         def return_dict(self):
@@ -97,9 +96,8 @@ class Postos:
                 "people": self.people,
                 "gender": self.gender,
                 "year": self.year,
-                "code": self.code,
                 "black": self.black,
-                "black": self.red
+                "red": self.red
             }
             return dic
 
@@ -132,6 +130,5 @@ class Postos:
 
 
 if __name__ == "__main__":
-    postos = Postos()
-    print(postos.get_usings())
+    
     pass

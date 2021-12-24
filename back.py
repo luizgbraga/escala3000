@@ -17,7 +17,6 @@ class Section:
             self.preview[date] = Section.Preview(date, p)
 
 
-    
     class Preview:
         
         def __init__(self, date1, posto_codes, forced_red=False):
@@ -30,15 +29,16 @@ class Section:
 
             self.postos = {}
             for code in posto_codes:
-                self.postos[code] = 
+                pass
 
 
         def alunos_request(self):
-
+            pass
 
 
 
 
 
 if __name__ == "__main__":
+
     pass
