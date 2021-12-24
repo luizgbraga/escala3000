@@ -1,4 +1,5 @@
 import pandas as pd
+import hashes
 
 class Postos:
 
@@ -44,6 +45,22 @@ class Postos:
         else:
             for key in self.postos:
                 print(self.postos[key].code, " ", self.postos[key].get_name())
+
+
+    def get_using(self):
+        using_dir = "./Data/postos/using.txt"
+        using = []
+        with open(using_dir) as f:
+            for line in f.readlines():
+                using.append(int(line))
+        return using
+
+    def save(self):
+        
+        pass
+
+    def close(self):
+        pass
 
 
     class Posto:
@@ -116,8 +133,5 @@ class Postos:
 
 if __name__ == "__main__":
     postos = Postos()
-    postos.list_postos()
-    #postos.new_posto(2, "Ala Sul", 3, 0, 1, 122)
-    postos.delete(122)
-    postos.list_postos()
+    print(postos.get_usings())
     pass
