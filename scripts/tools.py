@@ -36,7 +36,7 @@ class Date:
         return title
     
     def get_last_day():
-        options_dir = "./Data/options.json"
+        options_dir = "./var/system_variables.json"
         with open(options_dir, "r") as f:
             options_dic = json.loads(f.read())
             last = options_dic["last_scale"]

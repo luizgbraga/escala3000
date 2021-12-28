@@ -1,13 +1,14 @@
 import json
-from tools import Date
+from scripts.tools import Date
 
 class Alunos:
 
-    alunos_dir = "./Data/alunos/"
+    dir_alunos = "./data/alunos/"
+    dir_alunos_tmp = "./tmp/alunos/"
 
     def __init__(self, year):
         self.year = year
-        direc = Alunos.alunos_dir + str(year) + "_ano/all.json"
+        direc = Alunos.dir_alunos + str(year) + "_ano/all.json"
 
         with open(direc, "r") as f:
             alunos_dic = json.loads(f.read())
@@ -19,25 +20,36 @@ class Alunos:
             self.alunos[number] = aluno
 
 
-    def list_alunos(self):
-        for aluno in self.alunos:
-            print(aluno + " --> " + self.alunos[aluno].get_name())
-
-
     def save(self):
         dic_alunos = {}
         for number in self.postos:
             dic_alunos[number] = self.postos[number].return_dict()
-        
-        direc = Alunos.alunos_dir + str(self.year) + "_ano/all.json"
+
+        direc = Alunos.dir_alunos + str(self.year) + "_ano/all.json"
 
         with open(direc, "w") as f:
             json.dump(dic_alunos, f)
-        
+
+
+    def save_preview(self):
+        dic_alunos = {}
+        for number in self.postos:
+            dic_alunos[number] = self.postos[number].return_dict()
+
+        direc = Alunos.dir_alunos_tmp + str(self.year) + "_ano/all.json"
+
+        with open(direc, "w") as f:
+            json.dump(dic_alunos, f)
+
+
+    def save_tmp(self):
+        pass
+
+
     def get_list_alunos(self):
         lista = []
         for key in self.alunos:
-            lista.append((str(key) + "==>" + str(self.alunos[key].name)))
+            lista.append((str(key), str(self.alunos[key].get_name())))
         return lista
 
 
@@ -49,7 +61,7 @@ class Alunos:
             self.dispensa = Date.get_date(args["disp_lim"])
             self.tur_cmd = args["tur_cmd"]
             self.last_work = Date.get_date(args["last_work"])
-            self.scale_work_number = args["works_number"]
+            self.works_number = args["works_number"]
             self.changes_number = args["changes_number"]
 
 
@@ -85,7 +97,7 @@ class Alunos:
 
             if bool_disp_lim and bool_tur_cmd and bool_last_work:
                 self.last_work = date
-                self.scale_work_number += 1
+                self.works_number += 1
                 return True, self.name
             else:
                 return False, None

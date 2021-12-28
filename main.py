@@ -1,10 +1,10 @@
-import prints
-from back import Section
 from os import system
-from time import sleep
+import scripts.prints as prints
+from back import Section
+
 
 class Shell:
-        
+
     def __init__(self):
         self.section = Section()
         pass
@@ -19,65 +19,70 @@ class Shell:
 
 
     def get_comand(self):
-        print("""Available options(use -h to a brief help):
-preview [-d --date] [-s --show] | show [-w --what]
-change [-a --alunos] [--posto-code] [--scale] | 
-quit | about 
-Enter the comand:""")
+        prints.print_options()
 
-        opts = input(">>>").split("-")
-        option = opts.pop(0).split()[0]
+        opt = input(">>>").split("-")
+        option = opt.pop(0).split()[0]
+        opts = {}
+
+        for i in opt:
+            lista = i.split()
+            if len(lista) > 1:
+                opts[lista[0]] = lista[1:]
+            else:
+                opts[lista[0]] = "_"
 
         self.main_head()
 
-        if option == "preview":
-            for i in range(len(opts)):
-                if opts[i][0] == "d":
-                    date = opts[i].split()[1]
-                    self.section.update_preview(date)
-                if opts[i][0] == "s":
-                    self.show_preview()
-                if opts[i][0] == "h":
-                    print("""HELP: preview [-d --date] [-s --show]
-- date format: dd/mm/yyyy
-""")
-                    system("pause")
+        match option:
+            case "preview":
+                for flag in opts:
+                    match flag:
+                        case "d":
+                            date = opts[flag][0]
+                            self.section.update_preview(date)
+                        case "s":
+                            self.show_preview()
+                        case "h":
+                            prints.print_help(option)
 
-        elif option == "show":
-            for i in range(len(opts)):
-                if opts[i][0] == "w":
-                    what = opts[i].split()[1]
-                    if what == "alunos_list":
-                        self.show_alunos_list()
-                if opts[i][0] == "h":
-                    print("""HELP: show [-w --what]
-Options:
-- alunos_list: return number and name of all students in section
-""")
-                    system("pause")
+            case "show":
+                for flag in opts:
+                    match flag:
+                        case "w":
+                            what = opts[flag][0]
+                            match what:
+                                case "alunos_list": 
+                                    self.show_alunos_list()
+                                case "all_postos":
+                                    self.show_all_postos()
+                                case "using_postos":
+                                    self.show_using_postos()
+                                case _:
+                                    prints.print_non_existing()
+                        case "h":
+                            prints.print_help(option)
 
-        elif option == "change":
-            for i in range(len(opts)):
-                if opts[i][0] == "a":
-                    lista = opts.split(" ")
-                    alunos = (lista[1], lista[2])
-                    posto_code = lista[3]
-                    red = True if lista[4] == "red" else False
+            case "change":
+                for flag in opts:
+                    match flag:
+                        case "a":
+                            alunos = (opts[flag][0], opts[flag][1])
+                            posto_code = opts[flag][2]
+                            red = True if opts[flag][3] == "red" else False
+                            self.section.change(alunos, posto_code, red)
+                        case "h":
+                            prints.print_help(option)
 
-                    pass
-                if opts[i][0] == "h":
-                    print("""HELP: change [-a --alunos]
-- example: >>>change -a 21063 21424 120 red
-""")
-                    system("pause")
+            case "about":
+                self.about_mensage()
 
-        elif option == "about":
-            self.about_mensage()
-        elif option == "quit" or option == "q":
-            self.exit_mensage()
-            return False
-        else:
-            self.non_existing_option()
+            case "quit":
+                self.exit_mensage()
+                return False
+
+            case _:
+                self.non_existing_option()
         
         return True
 
@@ -90,6 +95,17 @@ Options:
     def show_alunos_list(self):
         num_names = self.section.alunos.get_list_alunos()
         prints.print_alunos_list(num_names)
+
+
+    def show_all_postos(self):
+        postos = self.section.postos.list_postos(details = True)
+        prints.print_postos(postos)
+
+
+    def show_using_postos(self):
+        postos = self.section.postos.list_postos(details = True, using = True)
+        prints.print_postos(postos)
+        pass
 
 
     def exit_mensage(self):

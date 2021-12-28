@@ -1,6 +1,6 @@
 from alunos import Alunos
 from postos import Postos
-from tools import Date
+from scripts.tools import Date
 from copy import deepcopy
 
 class Section:
@@ -8,34 +8,32 @@ class Section:
     def __init__(self):
         self.alunos = Alunos(1)
         self.postos = Postos()
-        self.preview_generator = None
-        self.set_preview_generator()
-        self.preview = {}
-        self.var = {"work_past":{}}
-
-
-    def set_preview_generator(self):
         self.preview_generator = (deepcopy(self.alunos), deepcopy(self.postos))
+        self.preview = {}
 
 
-    def clean_last_work(self):
-        self.var["work_past"] = {}
-
-
-    def undo_all(self):
-        self.set_preview_generator()
+    def get_preview_generator(self):
+        return deepcopy(self.preview_generator[0]), deepcopy(self.preview_generator[1])
 
 
     def update_preview(self, until):
-        self.preview = {}
+        self.preview.clear()
+        alunos, postos = self.get_preview_generator()
+
         end = Date.get_date(until)
-        p = self.postos.get_using()
+        using = self.postos.get_using()
         last = Date.get_last_day()
 
         while Date.check_dif(last, end) >= 0:
-            self.preview[Date.get_string(last)] = Section.Preview(last, p, self.preview_generator)
-
+            self.preview[Date.get_string(last)] = Section.Preview(last, using, (alunos, postos))
             last = Date.get_next_day(last)
+    
+    def save_preview(self):
+        pass
+
+
+    def save_preview_until(self):
+        pass
 
 
     def return_preview_text(self):
@@ -46,8 +44,11 @@ class Section:
 
 
     def change(self, alunos, code, red):
+        # alunos = alunu1, data1, aluno2, data2, code, red
+
         #implementar bool para ver se eles realmente estão nesses dias
         #implementar bool para ver se cada um pode tirar no outro dia
+
         if red:
             lista = self.preview_generator[1].postos[str(code)].red
             aluno1 = lista.index(int(alunos[0]))
@@ -63,8 +64,6 @@ class Section:
         self.preview_generator[0].alunos[alunos[1]].changes_number += 1
 
 
-
-
     class Preview:
         """
         - title
@@ -75,6 +74,7 @@ class Section:
         
         def __init__(self, date1, posto_codes, generator, forced_red=False):
             self.title = Date.generate_title(date1)
+            self.red = None
             self.postos_title = {}
             self.postos = {}
 
@@ -82,17 +82,15 @@ class Section:
                 self.red = True
             else:
                 self.red = False
-
-            temp_postos = {}
+ 
             for code in posto_codes:
                 pack = generator[1].postos[str(code)].request_preview(self.red)
-                temp_postos[str(code)] = pack
+
+                #posto_title
                 self.postos_title[str(code)] = pack["title"]
-            
-            for code in posto_codes:
+
                 n = 0
                 last  = 0
-                pack = temp_postos[str(code)]
                 dic = {}
                 while n < pack["people"]:
                     if pack["scale"]:

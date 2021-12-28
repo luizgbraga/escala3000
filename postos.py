@@ -3,11 +3,12 @@ import json
 
 class Postos:
 
-    postos_dir = "./Data/postos/postos.json"
+    dir_postos = "./data/postos/postos.json"
+    dir_postos_tmp = "./tmp/postos/postos.json"
 
 
     def __init__(self):
-        with open(Postos.postos_dir, "r") as f:
+        with open(Postos.dir_postos, "r") as f:
             postos_dic = json.loads(f.read())
 
         self.postos = {}
@@ -36,17 +37,25 @@ class Postos:
         removed = self.postos.pop(str(code))
 
 
-    def list_postos(self, details = False):
-        if details:
-            for key in self.postos:
-                print(key, " ", self.postos[key].get_name_details())
+    def list_postos(self, details = False, using = False):
+        if using:
+            codes = [str(x) for x in self.get_using()]
         else:
-            for key in self.postos:
-                print(key, " ", self.postos[key].get_name())
+            codes = list(self.postos.keys())
+
+        lista = []
+        if details:
+            for key in codes:
+                lista.append(key + " " + self.postos[key].get_name_details())
+        else:
+            for key in codes:
+                lista.append(key + " " + self.postos[key].get_name())
+
+        return lista
 
 
     def get_using(self):
-        options_dir = "./Data/options.json"
+        options_dir = "./var/system_variables.json"
         with open(options_dir, "r") as f:
             options_dic = json.loads(f.read())
             using = options_dic["using_postos"]
@@ -58,7 +67,16 @@ class Postos:
         for key in self.postos:
             dic_postos[key] = self.postos[key].return_dict()
 
-        with open(Postos.postos_dir, "w") as f:
+        with open(Postos.dir_postos, "w") as f:
+            json.dump(dic_postos, f)
+
+
+    def save(self):
+        dic_postos = {}
+        for key in self.postos:
+            dic_postos[key] = self.postos[key].return_dict()
+
+        with open(Postos.dir_postos_tmp, "w") as f:
             json.dump(dic_postos, f)
 
 

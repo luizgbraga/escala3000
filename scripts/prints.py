@@ -1,6 +1,40 @@
 from os import system
 from time import sleep
 
+def print_options():
+    print("""Available options(use -h to a brief help):
+preview [-d --date] [-s --show] | show [-w --what] 
+change [-a --alunos] [--posto-code] [--scale]
+quit | about 
+Enter the comand:""")
+
+
+def print_help(option):
+    match option:
+        case "preview":
+            print("""HELP: preview [-d --date] [-s --show]
+- date format: dd/mm/yyyy""")
+            system("pause")
+
+        case "show":
+            print("""HELP: show [-w --what]
+Options:
+- alunos_list: return number and name of all students in section
+- all_postos: return all postos(archived or not)
+- using_postos: return only current postos""")
+            system("pause")
+
+        case "change":
+            print("""HELP: change [-a --alunos]
+- example: >>>change -a 21063 21424 120 red
+""")
+            system("pause")
+
+        case _:
+            print("There's no help file for this comand")
+            system("pause")
+
+
 def print_preview(preview):
     print("Preview:")
     for date in preview:
@@ -17,7 +51,14 @@ def print_alunos_list(num_names):
     for i in range(len(num_names)):
         if i % 3 == 0:
             print("")
-        print(num_names[i].ljust(29), end = "")
+        string = num_names[i][0]  + " ==> " + num_names[i][1]
+        print(string.ljust(29), end = "")
+    system("pause")
+
+
+def print_postos(lista):
+    for i in lista:
+        print(i)
     system("pause")
 
 
