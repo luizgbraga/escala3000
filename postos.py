@@ -46,11 +46,10 @@ class Postos:
 
 
     def get_using(self):
-        using_dir = "./Data/postos/using.txt"
-        using = []
-        with open(using_dir) as f:
-            for line in f.readlines():
-                using.append(int(line))
+        options_dir = "./Data/options.json"
+        with open(options_dir, "r") as f:
+            options_dic = json.loads(f.read())
+            using = options_dic["using_postos"]
         return using
 
 
@@ -127,8 +126,21 @@ class Postos:
             else:
                 self.black = seg_masc.copy()
                 self.red = seg_masc[::-1]
+        
+
+        def request_preview(self, red):
+            """
+            scale - numbers sequence
+            people - how many people are selected
+            title
+            """
+
+            pack = {}
+            pack["scale"] = red
+            pack["people"] = self.people
+            pack["title"] = Postos.Posto.types[self.type] + " " + self.where
+            return pack
 
 
 if __name__ == "__main__":
-    
     pass

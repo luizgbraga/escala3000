@@ -1,5 +1,5 @@
 import json
-
+from tools import Date
 
 class Alunos:
 
@@ -33,6 +33,12 @@ class Alunos:
 
         with open(direc, "w") as f:
             json.dump(dic_alunos, f)
+        
+    def get_list_alunos(self):
+        lista = []
+        for key in self.alunos:
+            lista.append((str(key) + "==>" + str(self.alunos[key].name)))
+        return lista
 
 
     class Aluno:
@@ -40,9 +46,9 @@ class Alunos:
         def __init__(self, args):
             self.name = args["name"]
             self.gender = args["gender"]
-            self.dispensa = args["disp_lim"]
+            self.dispensa = Date.get_date(args["disp_lim"])
             self.tur_cmd = args["tur_cmd"]
-            self.last_work = args["last_work"]
+            self.last_work = Date.get_date(args["last_work"])
             self.scale_work_number = args["works_number"]
             self.changes_number = args["changes_number"]
 
@@ -56,12 +62,33 @@ class Alunos:
             dic = {
                 "name": self.name,
                 "gender": self.gender,
-                "disp_lim": self.disp_lim,
+                "disp_lim": Date.get_string(self.disp_lim),
                 "tur_cmd": self.tur_cmd,
-                "last_work": self.last_work,
+                "last_work": Date.get_string(self.last_work),
                 "works_number": self.works_number,
                 "changes_number": self.changes_number
             }
+
+
+        def request_preview(self, date):
+            """
+            Conditions:
+                - disp_limp
+                - tur_cmd
+                - last_work
+            """
+            #disp lim
+            dif = Date.check_dif(date, self.dispensa)
+            bool_disp_lim = dif < 0 
+            bool_tur_cmd = int(self.tur_cmd) == 0
+            bool_last_work = Date.check_dif(self.last_work, date) > 2
+
+            if bool_disp_lim and bool_tur_cmd and bool_last_work:
+                self.last_work = date
+                self.scale_work_number += 1
+                return True, self.name
+            else:
+                return False, None
 
 
 if __name__ == "__main__":
