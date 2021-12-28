@@ -1,4 +1,4 @@
-import pandas as pd
+import prints
 from back import Section
 from os import system
 from time import sleep
@@ -9,12 +9,12 @@ class Shell:
         self.section = Section()
         pass
 
+
     def run_shell(self):
         OK = True
         while OK:
-            self.main_interface()
+            self.main_head()
             OK = self.get_comand()
-        
         pass
 
 
@@ -28,7 +28,7 @@ Enter the comand:""")
         opts = input(">>>").split("-")
         option = opts.pop(0).split()[0]
 
-        self.main_interface()
+        self.main_head()
 
         if option == "preview":
             for i in range(len(opts)):
@@ -80,70 +80,36 @@ Options:
             self.non_existing_option()
         
         return True
-    
+
+
     def show_preview(self):
-        print("Preview:")
         preview = self.section.return_preview_text()
-        for date in preview:
-            print("#######################################################################################")
-            print(preview[date]["title"])
-            for posto_title in preview[date]["postos"]:
-                print("--> ", posto_title)
-                for name in preview[date]["postos"][posto_title]:
-                    print("\t", name)
-        system("pause")
+        prints.print_preview(preview)
 
 
     def show_alunos_list(self):
         num_names = self.section.alunos.get_list_alunos()
-        for i in range(len(num_names)):
-            if i % 3 == 0:
-                print("")
-            print(num_names[i].ljust(29), end = "")
-        system("pause")
+        prints.print_alunos_list(num_names)
 
-        
-    
+
     def exit_mensage(self):
-        print("Thanks for trusting us, we will be waiting for you.")
-        sleep(1)
-        system("cls")
-    
-    
-    def about_mensage(self):
-        print("""An initiative of the vibrant XXV students:
--ALXPV --> ALEXANDRE PAIVA
--BRAGA --> BRAGA
--WOBETEC --> ESDRAS
+        prints.print_quit()
 
-Take a look at our repository:
-https://github.com/wobetec/escala""")
-        print("")
-        system("pause")
+
+    def about_mensage(self):
+        prints.print_about()
+
 
     def non_existing_option(self):
-        print("Sorry this function is not defined.")
+        prints.print_non_existing()
 
 
-    def main_interface(self):
-        system("cls")
-        print("""███████╗███████╗ ██████╗ █████╗ ██╗      █████╗     ██████╗  ██████╗  ██████╗  ██████╗ 
-██╔════╝██╔════╝██╔════╝██╔══██╗██║     ██╔══██╗    ╚════██╗██╔═████╗██╔═████╗██╔═████╗
-█████╗  ███████╗██║     ███████║██║     ███████║     █████╔╝██║██╔██║██║██╔██║██║██╔██║
-██╔══╝  ╚════██║██║     ██╔══██║██║     ██╔══██║     ╚═══██╗████╔╝██║████╔╝██║████╔╝██║
-███████╗███████║╚██████╗██║  ██║███████╗██║  ██║    ██████╔╝╚██████╔╝╚██████╔╝╚██████╔╝
-╚══════╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝    ╚═════╝  ╚═════╝  ╚═════╝  ╚═════╝ 
-                                                    Powered by: ALXPV, BRAGA and WOBETEC""")
-class AppBone:
-
-    def __init__(self):
-        pass
+    def main_head(self):
+        prints.print_head()
 
 
 if __name__ == "__main__":
     s = Shell()
     s.run_shell()
     pass
-
-
 

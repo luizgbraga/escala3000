@@ -11,11 +11,15 @@ class Section:
         self.preview_generator = None
         self.set_preview_generator()
         self.preview = {}
-        self.var = {}
-    
-    
+        self.var = {"work_past":{}}
+
+
     def set_preview_generator(self):
         self.preview_generator = (deepcopy(self.alunos), deepcopy(self.postos))
+
+
+    def clean_last_work(self):
+        self.var["work_past"] = {}
 
 
     def undo_all(self):
